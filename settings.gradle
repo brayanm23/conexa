@@ -1,0 +1,6 @@
+rootProject.name = "Conexa Test"
+include ':app'
+include ':networking'
+include ':catalog'
+include ':cart'
+include ':ui'
