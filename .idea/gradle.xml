@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/cart" />
             <option value="$PROJECT_DIR$/catalog" />
+            <option value="$PROJECT_DIR$/category" />
             <option value="$PROJECT_DIR$/networking" />
             <option value="$PROJECT_DIR$/ui" />
           </set>
