@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.conexa.cart.databinding.CartFragmentBinding
-import com.conexa.cart.model.CartResponse
+import com.conexa.cart.model.Cart
 import com.conexa.cart.viewmodel.CartViewModel
 import com.conexa.cart.viewmodel.CartViewModel.CartUiState
 
@@ -23,17 +23,10 @@ class CartFragment : Fragment() {
                 is CartUiState.Loading -> {
                     showLoading()
                 }
-
-                is CartUiState.ServerError -> {
+                is CartUiState.Error -> {
                     hideLoading()
-                    showServerErrorScreen()
+                    showErrorScreen()
                 }
-
-                is CartUiState.ConnectionError -> {
-                    hideLoading()
-                    showConnectionErrorScreen()
-                }
-
                 is CartUiState.Success -> {
                     hideLoading()
                     bindScreen(uiStateResponse.data)
@@ -51,15 +44,10 @@ class CartFragment : Fragment() {
         return binding.root
     }
 
-    private fun bindScreen(data: CartResponse) {
+    private fun bindScreen(data: List<Cart>) {
 
     }
-
-    private fun showConnectionErrorScreen() {
-        TODO("Not yet implemented")
-    }
-
-    private fun showServerErrorScreen() {
+    private fun showErrorScreen() {
         TODO("Not yet implemented")
     }
 

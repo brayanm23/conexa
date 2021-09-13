@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/catalog_navigation"
+    app:startDestination="@id/catalogFragment">
+
+    <fragment
+        android:id="@+id/catalogFragment"
+        android:name="com.conexa.catalog.ui.CatalogFragment"
+        android:label="CatalogFragment"
+        tools:layout="@layout/catalog_fragment" />
+
+    <action
+        android:id="@+id/action_global_catalogFragment"
+        app:destination="@+id/catalogFragment">
+    </action>
+
+</navigation>

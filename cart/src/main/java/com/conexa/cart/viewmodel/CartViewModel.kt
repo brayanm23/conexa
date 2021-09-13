@@ -3,57 +3,42 @@ package com.conexa.cart.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.conexa.cart.model.CartResponse
+import com.conexa.cart.domain.ShowCartUseCase
+import com.conexa.cart.model.Cart
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class CartViewModel : ViewModel() {
+
+    private val showCartUseCase = ShowCartUseCase()
+
+    private val disposables: CompositeDisposable = CompositeDisposable()
 
     private val _uiState = MutableLiveData<CartUiState>()
     val uiState: LiveData<CartUiState>
         get() = _uiState
 
-    /*
-    var settingRepository = SettingRepository()
-
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ ->
-        _uiState.value = SettingsUiState.ConnectionError
+    fun getItemsInCard() {
+        disposables.add(showCartUseCase.execute()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { _uiState.setValue(CartUiState.Loading) }
+            .subscribe(
+                { response -> _uiState.setValue(CartUiState.Success(response)) },
+                { throwable -> _uiState.setValue(CartUiState.Error) }
+            )
+        )
     }
 
-    init {
-        getSettings()
+    override fun onCleared() {
+        disposables.clear()
     }
-
-    private fun showLoading() {
-        _uiState.value = SettingsUiState.Loading
-    }
-
-    fun getSettings() {
-        viewModelScope.launch(Dispatchers.Main + coroutineExceptionHandler) {
-            showLoading()
-
-            val response = settingRepository.getSettings()
-
-            when (response.status) {
-                Status.SUCCESS -> {
-                    response.data?.let { data ->
-                        _uiState.value = SettingsUiState.Success(data)
-                    }
-                }
-                Status.SERVER_ERROR -> {
-                    _uiState.value = SettingsUiState.ServerError
-                }
-                Status.CONNECTION_ERROR -> {
-                    _uiState.value = SettingsUiState.ConnectionError
-                }
-            }
-        }
-    }
-     */
 
     sealed class CartUiState {
         object Loading : CartUiState()
-        object ServerError : CartUiState()
-        object ConnectionError : CartUiState()
-        data class Success(val data: CartResponse) : CartUiState()
+        object Error : CartUiState()
+        data class Success(val data: List<Cart>) : CartUiState()
     }
 
 }

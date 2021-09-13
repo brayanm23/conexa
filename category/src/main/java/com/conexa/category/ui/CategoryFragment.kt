@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.conexa.category.databinding.CategoryFragmentBinding
-import com.conexa.category.model.CategoryResponse
 import com.conexa.category.viewmodel.CategoryViewModel
 import com.conexa.category.viewmodel.CategoryViewModel.CategoryUiState
 
@@ -23,17 +22,10 @@ class CategoryFragment : Fragment() {
                 is CategoryUiState.Loading -> {
                     showLoading()
                 }
-
-                is CategoryUiState.ServerError -> {
+                is CategoryUiState.Error -> {
                     hideLoading()
-                    showServerErrorScreen()
+                    showErrorScreen()
                 }
-
-                is CategoryUiState.ConnectionError -> {
-                    hideLoading()
-                    showConnectionErrorScreen()
-                }
-
                 is CategoryUiState.Success -> {
                     hideLoading()
                     bindScreen(uiStateResponse.data)
@@ -51,15 +43,11 @@ class CategoryFragment : Fragment() {
         return binding.root
     }
 
-    private fun bindScreen(data: CategoryResponse) {
+    private fun bindScreen(data: List<String>) {
 
     }
 
-    private fun showConnectionErrorScreen() {
-        TODO("Not yet implemented")
-    }
-
-    private fun showServerErrorScreen() {
+    private fun showErrorScreen() {
         TODO("Not yet implemented")
     }
 

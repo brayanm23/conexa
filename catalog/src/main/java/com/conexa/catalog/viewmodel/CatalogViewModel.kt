@@ -3,57 +3,42 @@ package com.conexa.catalog.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.conexa.catalog.model.CatalogResponse
+import com.conexa.catalog.domain.ShowCatalogUseCase
+import com.conexa.catalog.model.Product
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class CatalogViewModel : ViewModel() {
+
+    private val showCatalogUseCase = ShowCatalogUseCase()
+
+    private val disposables: CompositeDisposable = CompositeDisposable()
 
     private val _uiState = MutableLiveData<CatalogUiState>()
     val uiState: LiveData<CatalogUiState>
         get() = _uiState
 
-    /*
-    var settingRepository = SettingRepository()
-
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ ->
-        _uiState.value = SettingsUiState.ConnectionError
+    fun getCatalog() {
+        disposables.add(showCatalogUseCase.execute()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { _uiState.setValue(CatalogUiState.Loading) }
+            .subscribe(
+                { response -> _uiState.setValue(CatalogUiState.Success(response)) },
+                { throwable -> _uiState.setValue(CatalogUiState.Error) }
+            )
+        )
     }
 
-    init {
-        getSettings()
+    override fun onCleared() {
+        disposables.clear()
     }
-
-    private fun showLoading() {
-        _uiState.value = SettingsUiState.Loading
-    }
-
-    fun getSettings() {
-        viewModelScope.launch(Dispatchers.Main + coroutineExceptionHandler) {
-            showLoading()
-
-            val response = settingRepository.getSettings()
-
-            when (response.status) {
-                Status.SUCCESS -> {
-                    response.data?.let { data ->
-                        _uiState.value = SettingsUiState.Success(data)
-                    }
-                }
-                Status.SERVER_ERROR -> {
-                    _uiState.value = SettingsUiState.ServerError
-                }
-                Status.CONNECTION_ERROR -> {
-                    _uiState.value = SettingsUiState.ConnectionError
-                }
-            }
-        }
-    }
-     */
 
     sealed class CatalogUiState {
         object Loading : CatalogUiState()
-        object ServerError : CatalogUiState()
-        object ConnectionError : CatalogUiState()
-        data class Success(val data: CatalogResponse) : CatalogUiState()
+        object Error : CatalogUiState()
+        data class Success(val data: List<Product>) : CatalogUiState()
     }
 
 }

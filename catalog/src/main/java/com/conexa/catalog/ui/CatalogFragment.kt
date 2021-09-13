@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.conexa.catalog.databinding.CatalogFragmentBinding
-import com.conexa.catalog.model.CatalogResponse
+import com.conexa.catalog.model.Product
 import com.conexa.catalog.viewmodel.CatalogViewModel
 import com.conexa.catalog.viewmodel.CatalogViewModel.CatalogUiState
 
@@ -23,17 +23,10 @@ class CatalogFragment : Fragment() {
                 is CatalogUiState.Loading -> {
                     showLoading()
                 }
-
-                is CatalogUiState.ServerError -> {
+                is CatalogUiState.Error -> {
                     hideLoading()
-                    showServerErrorScreen()
+                    showErrorScreen()
                 }
-
-                is CatalogUiState.ConnectionError -> {
-                    hideLoading()
-                    showConnectionErrorScreen()
-                }
-
                 is CatalogUiState.Success -> {
                     hideLoading()
                     bindScreen(uiStateResponse.data)
@@ -48,26 +41,20 @@ class CatalogFragment : Fragment() {
     ): View {
         binding = CatalogFragmentBinding.inflate(inflater)
         viewModel.uiState.observe(viewLifecycleOwner, uiStateObserver)
+        viewModel.getCatalog()
         return binding.root
     }
 
-    private fun bindScreen(data: CatalogResponse) {
+    private fun bindScreen(data: List<Product>) {
 
     }
 
-    private fun showConnectionErrorScreen() {
-        TODO("Not yet implemented")
-    }
-
-    private fun showServerErrorScreen() {
-        TODO("Not yet implemented")
+    private fun showErrorScreen() {
     }
 
     private fun hideLoading() {
-        TODO("Not yet implemented")
     }
 
     private fun showLoading() {
-        TODO("Not yet implemented")
     }
 }
