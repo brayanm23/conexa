@@ -3,6 +3,7 @@ package com.conexa.catalog.repository.api
 import com.conexa.catalog.model.Product
 import io.reactivex.Single
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface CatalogApi {

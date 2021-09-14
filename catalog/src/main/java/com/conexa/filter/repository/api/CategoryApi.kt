@@ -1,4 +1,4 @@
-package com.conexa.category.repository.api
+package com.conexa.filter.repository.api
 
 import io.reactivex.Single
 import retrofit2.http.GET

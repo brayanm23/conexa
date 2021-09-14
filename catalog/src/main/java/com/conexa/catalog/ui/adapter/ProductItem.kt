@@ -4,9 +4,9 @@ import android.view.View
 import com.conexa.catalog.R
 import com.conexa.catalog.databinding.ProductItemAdapterBinding
 import com.conexa.catalog.model.Product
-//import com.xwray.groupie.viewbinding.BindableItem
+import com.xwray.groupie.viewbinding.BindableItem
 
-data class ProductItem(private val product: Product) /*: BindableItem<ProductItemAdapterBinding>() {
+data class ProductItem(private val product: Product) : BindableItem<ProductItemAdapterBinding>() {
 
     override fun getLayout() = R.layout.product_item_adapter
 
@@ -21,4 +21,4 @@ data class ProductItem(private val product: Product) /*: BindableItem<ProductIte
     override fun initializeViewBinding(view: View): ProductItemAdapterBinding {
         return ProductItemAdapterBinding.bind(view)
     }
-}*/
+}

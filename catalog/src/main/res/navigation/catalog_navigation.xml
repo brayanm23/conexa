@@ -9,11 +9,24 @@
         android:id="@+id/catalogFragment"
         android:name="com.conexa.catalog.ui.CatalogFragment"
         android:label="CatalogFragment"
-        tools:layout="@layout/catalog_fragment" />
+        tools:layout="@layout/catalog_fragment" >
 
-    <action
-        android:id="@+id/action_global_catalogFragment"
-        app:destination="@+id/catalogFragment">
-    </action>
+        <action
+            android:id="@+id/action_categoryFragment"
+            app:destination="@+id/categoryFragment"/>
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/categoryFragment"
+        android:name="com.conexa.filter.ui.CategoryBottomSheet"
+        android:label="categoryFragment"
+        tools:layout="@layout/category_fragment" >
+
+        <action
+            android:id="@+id/action_catalogFragment"
+            app:destination="@+id/catalogFragment"
+            app:popUpToInclusive="true"/>
+    </dialog>
 
 </navigation>

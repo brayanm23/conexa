@@ -1,6 +1,6 @@
-package com.conexa.category.repository
+package com.conexa.filter.repository
 
-import com.conexa.category.repository.api.CategoryApi
+import com.conexa.filter.repository.api.CategoryApi
 import com.conexa.networking.RetrofitBuilder
 import io.reactivex.Single
 

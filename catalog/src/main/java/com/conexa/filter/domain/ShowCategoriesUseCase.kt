@@ -1,6 +1,6 @@
-package com.conexa.category.domain
+package com.conexa.filter.domain
 
-import com.conexa.category.repository.CategoryRepository
+import com.conexa.filter.repository.CategoryRepository
 import io.reactivex.Single
 
 class ShowCategoriesUseCase {

@@ -3,6 +3,7 @@ package com.conexa.catalog.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.conexa.catalog.domain.ShowCatalogApplyFilterUseCase
 import com.conexa.catalog.domain.ShowCatalogUseCase
 import com.conexa.catalog.model.Product
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,6 +14,8 @@ class CatalogViewModel : ViewModel() {
 
     private val showCatalogUseCase = ShowCatalogUseCase()
 
+    private val showCatalogApplyFilterUseCase = ShowCatalogApplyFilterUseCase()
+
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     private val _uiState = MutableLiveData<CatalogUiState>()
@@ -21,6 +24,18 @@ class CatalogViewModel : ViewModel() {
 
     fun getCatalog() {
         disposables.add(showCatalogUseCase.execute()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { _uiState.setValue(CatalogUiState.Loading) }
+            .subscribe(
+                { response -> _uiState.setValue(CatalogUiState.Success(response)) },
+                { throwable -> _uiState.setValue(CatalogUiState.Error) }
+            )
+        )
+    }
+
+    fun getCatalogApplyFilter(category: String) {
+        disposables.add(showCatalogApplyFilterUseCase.execute(category)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { _uiState.setValue(CatalogUiState.Loading) }

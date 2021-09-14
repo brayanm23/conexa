@@ -10,4 +10,6 @@ class CatalogRepository {
     var catalogapi = RetrofitBuilder.getClient("https://fakestoreapi.com/").create(CatalogApi::class.java)
 
     fun getCatalog(): Single<List<Product>> = catalogapi.getProducts()
+
+    fun getCatalogApplyFilter(category: String): Single<List<Product>> = catalogapi.getProductsSpecificCategory(category)
 }

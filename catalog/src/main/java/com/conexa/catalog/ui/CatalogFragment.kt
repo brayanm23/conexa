@@ -7,16 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import com.conexa.catalog.R
 import com.conexa.catalog.databinding.CatalogFragmentBinding
 import com.conexa.catalog.model.Product
-import com.conexa.catalog.ui.adapter.ProductAdapter
+import com.conexa.catalog.ui.adapter.ProductItem
 import com.conexa.catalog.viewmodel.CatalogViewModel
 import com.conexa.catalog.viewmodel.CatalogViewModel.CatalogUiState
+import com.conexa.filter.viewmodel.CategoryViewModel
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 
 class CatalogFragment : Fragment() {
 
     private lateinit var binding: CatalogFragmentBinding
     private val viewModel: CatalogViewModel by activityViewModels()
+    private val viewModelFilter: CategoryViewModel by activityViewModels()
 
     private val uiStateObserver: Observer<CatalogUiState> =
         Observer { uiStateResponse ->
@@ -42,26 +48,26 @@ class CatalogFragment : Fragment() {
     ): View {
         binding = CatalogFragmentBinding.inflate(inflater)
         viewModel.uiState.observe(viewLifecycleOwner, uiStateObserver)
-        viewModel.getCatalog()
         return binding.root
     }
 
-    private fun bindScreen(data: List<Product>) {
-        binding.catalog.adapter = ProductAdapter(data)
+    override fun onResume() {
+        super.onResume()
+        if (viewModelFilter.filter.value.isNullOrBlank())
+            viewModel.getCatalog()
+        else
+            viewModel.getCatalogApplyFilter(viewModelFilter.filter.value!!)
     }
 
-    /*private fun bindScreen(data: List<Product>) {
+    private fun bindScreen(data: List<Product>) {
         val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
-            addAll(data.toProductItem())
+            addAll(data.map { ProductItem(it) })
         }
         binding.catalog.adapter = groupAdapter
-    }
-
-    fun List<Product>.toProductItem() : List<ProductItem>{
-        return this.map {
-            ProductItem(it)
+        binding.filter.setOnClickListener {
+            findNavController().navigate(R.id.action_categoryFragment)
         }
-    }*/
+    }
 
     private fun showErrorScreen() {
     }

@@ -6,6 +6,5 @@
 
     <include app:graph="@navigation/cart_navigation" />
     <include app:graph="@navigation/catalog_navigation" />
-    <include app:graph="@navigation/category_navigation" />
 
 </navigation>

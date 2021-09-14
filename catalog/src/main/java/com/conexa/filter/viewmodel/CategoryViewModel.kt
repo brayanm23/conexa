@@ -1,9 +1,9 @@
-package com.conexa.category.viewmodel
+package com.conexa.filter.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.conexa.category.domain.ShowCategoriesUseCase
+import com.conexa.filter.domain.ShowCategoriesUseCase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -18,6 +18,10 @@ class CategoryViewModel : ViewModel() {
     val uiState: LiveData<CategoryUiState>
         get() = _uiState
 
+    private val _filter = MutableLiveData<String?>(null)
+    val filter: LiveData<String?>
+        get() = _filter
+
     fun getCategories() {
         disposables.add(showCategoriesUseCase.execute()
             .subscribeOn(Schedulers.io())
@@ -28,6 +32,14 @@ class CategoryViewModel : ViewModel() {
                 { throwable -> _uiState.setValue(CategoryUiState.Error) }
             )
         )
+    }
+
+    fun saveCategoryForFilter(category: String) {
+        _filter.postValue(category)
+    }
+
+    fun deleteCategoryForFilter() {
+        _filter.postValue(null)
     }
 
     override fun onCleared() {
