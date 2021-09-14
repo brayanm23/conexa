@@ -5,9 +5,9 @@
     android:id="@+id/category_navigation"
     app:startDestination="@id/categoryFragment">
 
-    <fragment
+    <dialog
         android:id="@+id/categoryFragment"
-        android:name="com.conexa.category.ui.CategoryFragment"
+        android:name="com.conexa.category.ui.CategoryBottomSheet"
         android:label="categoryFragment"
         tools:layout="@layout/category_fragment" />
 

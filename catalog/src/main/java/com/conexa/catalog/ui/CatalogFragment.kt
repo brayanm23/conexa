@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.conexa.catalog.databinding.CatalogFragmentBinding
 import com.conexa.catalog.model.Product
+import com.conexa.catalog.ui.adapter.ProductAdapter
 import com.conexa.catalog.viewmodel.CatalogViewModel
 import com.conexa.catalog.viewmodel.CatalogViewModel.CatalogUiState
 
@@ -46,8 +47,21 @@ class CatalogFragment : Fragment() {
     }
 
     private fun bindScreen(data: List<Product>) {
-
+        binding.catalog.adapter = ProductAdapter(data)
     }
+
+    /*private fun bindScreen(data: List<Product>) {
+        val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
+            addAll(data.toProductItem())
+        }
+        binding.catalog.adapter = groupAdapter
+    }
+
+    fun List<Product>.toProductItem() : List<ProductItem>{
+        return this.map {
+            ProductItem(it)
+        }
+    }*/
 
     private fun showErrorScreen() {
     }

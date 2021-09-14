@@ -10,8 +10,9 @@ import androidx.lifecycle.Observer
 import com.conexa.category.databinding.CategoryFragmentBinding
 import com.conexa.category.viewmodel.CategoryViewModel
 import com.conexa.category.viewmodel.CategoryViewModel.CategoryUiState
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class CategoryFragment : Fragment() {
+class CategoryBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: CategoryFragmentBinding
     private val viewModel: CategoryViewModel by activityViewModels()
