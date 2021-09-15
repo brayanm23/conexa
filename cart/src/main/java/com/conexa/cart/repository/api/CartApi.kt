@@ -8,10 +8,10 @@ import retrofit2.http.Path
 
 interface CartApi {
 
-    @GET("carts")
-    fun getItemsInCart(): Single<List<Cart>>
+    @GET("carts/5")
+    fun getItemsInCart(): Single<Cart>
 
-    @GET("cart/7")
+    @GET("cart/5")
     fun updateCart(@Body cart: Cart): Single<Cart>
 
 }

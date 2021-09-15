@@ -4,7 +4,7 @@ import com.conexa.cart.model.Cart
 import com.conexa.cart.repository.CartRepository
 import io.reactivex.Single
 
-class UpdateCartUseCase {
+class UpdateItemInCartUseCase {
 
     var cartRepository = CartRepository()
 

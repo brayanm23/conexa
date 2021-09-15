@@ -4,7 +4,6 @@
     android:id="@+id/global_navigation"
     app:startDestination="@id/catalog_navigation">
 
-    <include app:graph="@navigation/cart_navigation" />
     <include app:graph="@navigation/catalog_navigation" />
 
 </navigation>

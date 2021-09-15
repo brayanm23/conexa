@@ -1,6 +1,9 @@
 package com.conexa.catalog.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,14 +18,45 @@ import com.conexa.catalog.ui.adapter.ProductItem
 import com.conexa.catalog.viewmodel.CatalogViewModel
 import com.conexa.catalog.viewmodel.CatalogViewModel.CatalogUiState
 import com.conexa.filter.viewmodel.CategoryViewModel
+import com.google.gson.Gson
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
 
 class CatalogFragment : Fragment() {
 
     private lateinit var binding: CatalogFragmentBinding
     private val viewModel: CatalogViewModel by activityViewModels()
     private val viewModelFilter: CategoryViewModel by activityViewModels()
+
+    private val textWatcher: TextWatcher = object : TextWatcher {
+        val subject: PublishSubject<CharSequence> = PublishSubject.create()
+
+        init {
+            subject.debounce(750, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        viewModel.search(binding.search.text.toString())?.let {
+                            Log.d("brayan lista", Gson().toJson(it))
+                            bindScreen(it)
+                        } ?: run {
+                        Log.d("brayan lista", "es null")
+                    }
+                    },
+                    {}
+                )
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            subject.onNext(s ?: "")
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+    }
 
     private val uiStateObserver: Observer<CatalogUiState> =
         Observer { uiStateResponse ->
@@ -46,8 +80,13 @@ class CatalogFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = CatalogFragmentBinding.inflate(inflater)
+        binding = CatalogFragmentBinding.inflate(inflater).apply {
+            search.addTextChangedListener(textWatcher)
+            filter.setOnClickListener { findNavController().navigate(R.id.action_categoryFragment) }
+            cart.setOnClickListener { findNavController().navigate(R.id.action_cartFragment) }
+        }
         viewModel.uiState.observe(viewLifecycleOwner, uiStateObserver)
+
         return binding.root
     }
 
@@ -64,9 +103,7 @@ class CatalogFragment : Fragment() {
             addAll(data.map { ProductItem(it) })
         }
         binding.catalog.adapter = groupAdapter
-        binding.filter.setOnClickListener {
-            findNavController().navigate(R.id.action_categoryFragment)
-        }
+
     }
 
     private fun showErrorScreen() {

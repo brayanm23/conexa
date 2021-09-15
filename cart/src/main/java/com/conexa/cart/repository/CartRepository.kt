@@ -9,7 +9,7 @@ class CartRepository {
 
     var cartapi = RetrofitBuilder.getClient("https://fakestoreapi.com/").create(CartApi::class.java)
 
-    fun getItemsInCart(): Single<List<Cart>> = cartapi.getItemsInCart()
+    fun getItemsInCart(): Single<Cart> = cartapi.getItemsInCart()
 
     fun updateCart(cart: Cart): Single<Cart> = cartapi.updateCart(cart)
 }

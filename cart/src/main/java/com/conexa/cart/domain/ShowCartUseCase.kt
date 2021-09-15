@@ -8,7 +8,7 @@ class ShowCartUseCase {
 
     var cartRepository = CartRepository()
 
-    fun execute(): Single<List<Cart>> {
+    fun execute(): Single<Cart> {
         return cartRepository.getItemsInCart()
     }
 

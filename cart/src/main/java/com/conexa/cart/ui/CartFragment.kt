@@ -9,8 +9,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.conexa.cart.databinding.CartFragmentBinding
 import com.conexa.cart.model.Cart
+import com.conexa.cart.ui.adapter.CartItem
 import com.conexa.cart.viewmodel.CartViewModel
 import com.conexa.cart.viewmodel.CartViewModel.CartUiState
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 
 class CartFragment : Fragment() {
 
@@ -41,21 +44,22 @@ class CartFragment : Fragment() {
     ): View {
         binding = CartFragmentBinding.inflate(inflater)
         viewModel.uiState.observe(viewLifecycleOwner, uiStateObserver)
+        viewModel.getCart()
         return binding.root
     }
 
-    private fun bindScreen(data: List<Cart>) {
-
+    private fun bindScreen(data: Cart) {
+        val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
+            addAll(data.products.map { CartItem(it) })
+        }
+        binding.products.adapter = groupAdapter
     }
     private fun showErrorScreen() {
-        TODO("Not yet implemented")
     }
 
     private fun hideLoading() {
-        TODO("Not yet implemented")
     }
 
     private fun showLoading() {
-        TODO("Not yet implemented")
     }
 }
