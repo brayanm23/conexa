@@ -21,6 +21,7 @@ import com.xwray.groupie.GroupieViewHolder
 class CartFragment : Fragment(), CartItem.OnClickListener {
 
     private lateinit var binding: CartFragmentBinding
+    private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val viewModel: CartViewModel by viewModels { ViewModelFactory(DatabaseBuilder.getInstance(requireContext())) }
 
     private val uiStateObserver: Observer<CartUiState> =
@@ -43,11 +44,7 @@ class CartFragment : Fragment(), CartItem.OnClickListener {
                 }
                 is CartUiState.DeleteProduct -> {
                     hideLoading()
-                    deleteProduct(uiStateResponse.id)
-                }
-                is CartUiState.UpdateProduct -> {
-                    hideLoading()
-                    updateProduct(uiStateResponse.id, uiStateResponse.quantity)
+                    deleteProduct(uiStateResponse.product)
                 }
             }
         }
@@ -64,9 +61,7 @@ class CartFragment : Fragment(), CartItem.OnClickListener {
     }
 
     private fun bindScreen(data: List<Product>) {
-        val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
-            addAll(data.map { CartItem(it, this@CartFragment) })
-        }
+        groupAdapter.addAll(data.map { CartItem(it, this@CartFragment) })
         binding.products.adapter = groupAdapter
     }
 
@@ -79,18 +74,16 @@ class CartFragment : Fragment(), CartItem.OnClickListener {
     private fun showLoading() {
     }
 
-    private fun deleteProduct(id: Int) {
-    }
-
-    private fun updateProduct(id: Int, quantity: Int) {
-
+    private fun deleteProduct(product: Product) {
+        groupAdapter.remove(CartItem(product, this@CartFragment))
     }
 
     private fun showEmptyState() {
+
     }
 
-    override fun onDeleteClick(id: Int) {
-        viewModel.removeProductInCart(id)
+    override fun onDeleteClick(product: Product) {
+        viewModel.removeProductInCart(product)
     }
 
     override fun onUpdateClick(id: Int, quantity: Int) {

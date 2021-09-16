@@ -16,9 +16,17 @@ data class CartItem(private val product: Product, private val listener: OnClickL
             title.text = product.title
             amount.text = product.quantity.toString()
             price.text = product.price
-            delete.setOnClickListener { listener.onDeleteClick(product.id) }
-            add.setOnClickListener { listener.onUpdateClick(product.id, product.quantity + 1) }
-            subtract.setOnClickListener { listener.onUpdateClick(product.id, product.quantity - 1) }
+            delete.setOnClickListener { listener.onDeleteClick(product) }
+            add.setOnClickListener {
+                product.quantity = product.quantity + 1
+                amount.text = product.quantity.toString()
+                listener.onUpdateClick(product.id, product.quantity)
+            }
+            subtract.setOnClickListener {
+                product.quantity = product.quantity - 1
+                amount.text = product.quantity.toString()
+                listener.onUpdateClick(product.id, product.quantity)
+            }
         }
     }
 
@@ -27,7 +35,7 @@ data class CartItem(private val product: Product, private val listener: OnClickL
     }
 
     interface OnClickListener {
-        fun onDeleteClick(id: Int)
+        fun onDeleteClick(product: Product)
         fun onUpdateClick(id: Int, quantity: Int)
     }
 }

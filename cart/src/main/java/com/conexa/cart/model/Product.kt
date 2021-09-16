@@ -18,7 +18,7 @@ data class Product(
     @ColumnInfo(name = COLUMN_NAME_DESCRIPTION)
     val description: String,
     @ColumnInfo(name = COLUMN_NAME_QUANTITY)
-    val quantity: Int,
+    var quantity: Int,
     @ColumnInfo(name = COLUMN_NAME_IMAGE)
     val image: String
 ) {

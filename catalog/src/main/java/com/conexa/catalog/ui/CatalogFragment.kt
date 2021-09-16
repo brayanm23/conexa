@@ -27,7 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
-class CatalogFragment : Fragment() {
+class CatalogFragment : Fragment(), ProductItem.OnClickListener {
 
     private lateinit var binding: CatalogFragmentBinding
     private val viewModel: CatalogViewModel by viewModels()
@@ -106,7 +106,7 @@ class CatalogFragment : Fragment() {
         viewModelCart.insertProducts(data)
         binding.catalog.visibility = View.VISIBLE
         val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
-            addAll(data.map { ProductItem(it) })
+            addAll(data.map { ProductItem(it, this@CatalogFragment) })
         }
         binding.catalog.adapter = groupAdapter
     }
@@ -122,5 +122,9 @@ class CatalogFragment : Fragment() {
         binding.loading.visibility = View.VISIBLE
         binding.catalog.visibility = View.GONE
 
+    }
+
+    override fun onClickAddInCart(id: Int) {
+        viewModelCart.updateItemInCart(id, 1)
     }
 }

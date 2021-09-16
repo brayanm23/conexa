@@ -52,20 +52,17 @@ class CartViewModel(db: AppDatabase): ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { _uiState.setValue(CartUiState.Loading) }
-            .subscribe(
-                { _uiState.value = CartUiState.UpdateProduct(id, quantity) },
-                { throwable -> _uiState.setValue(CartUiState.Error) }
-            )
+            .subscribe()
         )
     }
 
-    fun removeProductInCart(id: Int) {
-        disposables.add(removeItemInCardUseCase.execute(id.toString())
+    fun removeProductInCart(product: Product) {
+        disposables.add(removeItemInCardUseCase.execute(product.id.toString())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { _uiState.setValue(CartUiState.Loading) }
             .subscribe(
-                { _uiState.value = CartUiState.DeleteProduct(id) },
+                { _uiState.value = CartUiState.DeleteProduct(product) },
                 { throwable -> _uiState.setValue(CartUiState.Error) }
             )
         )
@@ -91,8 +88,7 @@ class CartViewModel(db: AppDatabase): ViewModel() {
         object Loading : CartUiState()
         object Error : CartUiState()
         object EmptyState : CartUiState()
-        data class DeleteProduct(val id: Int) : CartUiState()
-        data class UpdateProduct(val id: Int, val quantity: Int,) : CartUiState()
+        data class DeleteProduct(val product: Product) : CartUiState()
         data class ShowProducts(val data: List<Product>) : CartUiState()
     }
 
