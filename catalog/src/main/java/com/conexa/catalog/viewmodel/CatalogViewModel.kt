@@ -20,6 +20,9 @@ class CatalogViewModel : ViewModel() {
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     private val _products = MutableLiveData<List<Product>>()
+    val products: LiveData<List<Product>>
+        get() = _products
+
     private val _uiState = MutableLiveData<CatalogUiState>()
     val uiState: LiveData<CatalogUiState>
         get() = _uiState
@@ -43,7 +46,7 @@ class CatalogViewModel : ViewModel() {
             .doOnSubscribe { _uiState.setValue(CatalogUiState.Loading) }
             .subscribe(
                 { response ->
-                    _products.setValue(response)
+                    _products.value = response
                     _uiState.value = CatalogUiState.Success(response)
                 },
                 { throwable -> _uiState.setValue(CatalogUiState.Error) }
@@ -52,7 +55,7 @@ class CatalogViewModel : ViewModel() {
     }
 
     fun search(searchText: String): List<Product>? {
-        _products.value?.let {
+        products.value?.let {
             return it.filter { product ->
                 searchText.toLowerCase().contains(product.title.toLowerCase())
             }

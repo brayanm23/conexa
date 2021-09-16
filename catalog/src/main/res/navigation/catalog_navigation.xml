@@ -36,6 +36,7 @@
         <action
             android:id="@+id/action_catalogFragment"
             app:destination="@+id/catalogFragment"
+            app:popUpTo="@id/catalogFragment"
             app:popUpToInclusive="true"/>
     </dialog>
 

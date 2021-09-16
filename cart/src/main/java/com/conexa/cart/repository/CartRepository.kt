@@ -1,15 +1,23 @@
 package com.conexa.cart.repository
 
-import com.conexa.cart.model.Cart
-import com.conexa.cart.repository.api.CartApi
-import com.conexa.networking.RetrofitBuilder
+import android.content.Context
+import com.conexa.cart.repository.database.AppDatabase
+import com.conexa.cart.repository.database.DatabaseBuilder
+import com.conexa.cart.model.Product
+import io.reactivex.Completable
 import io.reactivex.Single
 
-class CartRepository {
+class CartRepository(context: Context) {
 
-    var cartapi = RetrofitBuilder.getClient("https://fakestoreapi.com/").create(CartApi::class.java)
+    private val db: AppDatabase = DatabaseBuilder.getInstance(context)
 
-    fun getItemsInCart(): Single<Cart> = cartapi.getItemsInCart()
+    fun insertAllProduct(products: List<Product>): Completable = db.productDao().insertAllProduct(products)
 
-    fun updateCart(cart: Cart): Single<Cart> = cartapi.updateCart(cart)
+    fun getItemsInCart(): Single<List<Product>> = db.productDao().getProductInCart()
+
+    fun updateProductInCart(id: Int, quantity: Int): Single<Unit> = db.productDao().updateProductInCart(id, quantity)
+
+    fun deleteById(id: String): Completable = db.productDao().deleteById(id)
+
+    fun deleteAllProductInCart(): Completable = db.productDao().deleteAllProductInCart()
 }

@@ -8,14 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.conexa.cart.databinding.CartFragmentBinding
-import com.conexa.cart.model.Cart
+import com.conexa.cart.model.Product
 import com.conexa.cart.ui.adapter.CartItem
 import com.conexa.cart.viewmodel.CartViewModel
 import com.conexa.cart.viewmodel.CartViewModel.CartUiState
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 
-class CartFragment : Fragment() {
+class CartFragment : Fragment(), CartItem.OnClickListener {
 
     private lateinit var binding: CartFragmentBinding
     private val viewModel: CartViewModel by activityViewModels()
@@ -30,10 +30,13 @@ class CartFragment : Fragment() {
                     hideLoading()
                     showErrorScreen()
                 }
-                is CartUiState.Success -> {
+                is CartUiState.ShowProducts -> {
                     hideLoading()
                     bindScreen(uiStateResponse.data)
                 }
+                is CartUiState.DeleteAll -> {}
+                is CartUiState.DeleteProduct -> {}
+                is CartUiState.UpdateProduct -> {}
             }
         }
 
@@ -44,13 +47,14 @@ class CartFragment : Fragment() {
     ): View {
         binding = CartFragmentBinding.inflate(inflater)
         viewModel.uiState.observe(viewLifecycleOwner, uiStateObserver)
-        viewModel.getCart()
+        viewModel.getProductsInCart()
+
         return binding.root
     }
 
-    private fun bindScreen(data: Cart) {
+    private fun bindScreen(data: List<Product>) {
         val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
-            addAll(data.products.map { CartItem(it) })
+            addAll(data.map { CartItem(it, this@CartFragment) })
         }
         binding.products.adapter = groupAdapter
     }
@@ -61,5 +65,13 @@ class CartFragment : Fragment() {
     }
 
     private fun showLoading() {
+    }
+
+    override fun onDeleteClick(id: Int) {
+        viewModel.removeProductInCart(id)
+    }
+
+    override fun onUpdateClick(id: Int, quantity: Int) {
+        viewModel.updateItemInCart(id, quantity)
     }
 }

@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.conexa.cart.viewmodel.CartViewModel
 import com.conexa.catalog.R
 import com.conexa.catalog.databinding.CatalogFragmentBinding
 import com.conexa.catalog.model.Product
@@ -28,8 +30,9 @@ import java.util.concurrent.TimeUnit
 class CatalogFragment : Fragment() {
 
     private lateinit var binding: CatalogFragmentBinding
-    private val viewModel: CatalogViewModel by activityViewModels()
+    private val viewModel: CatalogViewModel by viewModels()
     private val viewModelFilter: CategoryViewModel by activityViewModels()
+    private val viewModelCart: CartViewModel by activityViewModels()
 
     private val textWatcher: TextWatcher = object : TextWatcher {
         val subject: PublishSubject<CharSequence> = PublishSubject.create()
@@ -82,7 +85,14 @@ class CatalogFragment : Fragment() {
     ): View {
         binding = CatalogFragmentBinding.inflate(inflater).apply {
             search.addTextChangedListener(textWatcher)
-            filter.setOnClickListener { findNavController().navigate(R.id.action_categoryFragment) }
+            filter.setOnClickListener {
+                if (viewModelFilter.filter.value.isNullOrBlank()) {
+                    findNavController().navigate(R.id.action_categoryFragment)
+                } else {
+                    viewModel.getCatalog()
+                    filter.setImageResource(R.drawable.ic_filter)
+                }
+            }
             cart.setOnClickListener { findNavController().navigate(R.id.action_cartFragment) }
         }
         viewModel.uiState.observe(viewLifecycleOwner, uiStateObserver)
@@ -92,18 +102,20 @@ class CatalogFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (viewModelFilter.filter.value.isNullOrBlank())
+        if (viewModelFilter.filter.value.isNullOrBlank()) {
             viewModel.getCatalog()
-        else
+        } else {
             viewModel.getCatalogApplyFilter(viewModelFilter.filter.value!!)
+            binding.filter.setImageResource(R.drawable.ic_close)
+        }
     }
 
     private fun bindScreen(data: List<Product>) {
+        viewModelCart.insertProducts(data)
         val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
             addAll(data.map { ProductItem(it) })
         }
         binding.catalog.adapter = groupAdapter
-
     }
 
     private fun showErrorScreen() {
