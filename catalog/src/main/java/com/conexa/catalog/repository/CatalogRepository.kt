@@ -1,6 +1,6 @@
 package com.conexa.catalog.repository
 
-import com.conexa.catalog.model.Product
+import com.conexa.cart.model.Product
 import com.conexa.catalog.repository.api.CatalogApi
 import com.conexa.networking.RetrofitBuilder
 import io.reactivex.Single

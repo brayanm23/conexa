@@ -1,6 +1,6 @@
 package com.conexa.catalog.domain
 
-import com.conexa.catalog.model.Product
+import com.conexa.cart.model.Product
 import com.conexa.catalog.repository.CatalogRepository
 import io.reactivex.Single
 

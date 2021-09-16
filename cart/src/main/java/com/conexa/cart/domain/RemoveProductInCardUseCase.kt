@@ -1,12 +1,12 @@
 package com.conexa.cart.domain
 
-import android.content.Context
 import com.conexa.cart.repository.CartRepository
+import com.conexa.cart.repository.database.AppDatabase
 import io.reactivex.Completable
 
-class RemoveProductInCardUseCase(context: Context) {
+class RemoveProductInCardUseCase(db: AppDatabase) {
 
-    var cartRepository = CartRepository(context)
+    var cartRepository = CartRepository(db)
 
     fun execute(id: String): Completable {
         return cartRepository.deleteById(id)

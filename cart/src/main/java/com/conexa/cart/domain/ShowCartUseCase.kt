@@ -1,13 +1,13 @@
 package com.conexa.cart.domain
 
-import android.content.Context
 import com.conexa.cart.model.Product
 import com.conexa.cart.repository.CartRepository
+import com.conexa.cart.repository.database.AppDatabase
 import io.reactivex.Single
 
-class ShowCartUseCase(context: Context) {
+class ShowCartUseCase(db: AppDatabase) {
 
-    var cartRepository = CartRepository(context)
+    var cartRepository = CartRepository(db)
 
     fun execute(): Single<List<Product>> {
         return cartRepository.getItemsInCart()

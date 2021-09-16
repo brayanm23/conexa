@@ -55,6 +55,7 @@ class CategoryBottomSheet : BottomSheetDialogFragment(), CategoryItem.OnClickIte
     }
 
     private fun bindScreen(data: List<String>) {
+        binding.categories.visibility = View.VISIBLE
         val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
             addAll(data.map { CategoryItem(it, this@CategoryBottomSheet) })
         }
@@ -65,8 +66,10 @@ class CategoryBottomSheet : BottomSheetDialogFragment(), CategoryItem.OnClickIte
     }
 
     private fun hideLoading() {
+        binding.loading.visibility = View.GONE
     }
 
     private fun showLoading() {
+        binding.loading.visibility = View.VISIBLE
     }
 }

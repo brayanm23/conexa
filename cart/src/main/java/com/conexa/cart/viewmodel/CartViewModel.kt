@@ -1,23 +1,22 @@
 package com.conexa.cart.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.conexa.cart.domain.*
 import com.conexa.cart.model.Product
+import com.conexa.cart.repository.database.AppDatabase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class CartViewModel(application: Application): AndroidViewModel(application) {
+class CartViewModel(db: AppDatabase): ViewModel() {
 
-    private val context = getApplication<Application>().applicationContext
-    private val showCartUseCase = ShowCartUseCase(context)
-    private val updateItemInCartUseCase = UpdateProductInCartUseCase(context)
-    private val removeAllProductCartUseCase = RemoveAllProductCartUseCase(context)
-    private val removeItemInCardUseCase = RemoveProductInCardUseCase(context)
-    private val insertProductUseCase = InsertProductsUseCase(context)
+    private val showCartUseCase = ShowCartUseCase(db)
+    private val updateItemInCartUseCase = UpdateProductInCartUseCase(db)
+    private val removeAllProductCartUseCase = RemoveAllProductCartUseCase(db)
+    private val removeItemInCardUseCase = RemoveProductInCardUseCase(db)
+    private val insertProductUseCase = InsertProductsUseCase(db)
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
@@ -78,7 +77,7 @@ class CartViewModel(application: Application): AndroidViewModel(application) {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { _uiState.setValue(CartUiState.Loading) }
             .subscribe(
-                { _uiState.value = CartUiState.DeleteAll },
+                { _uiState.value = CartUiState.EmptyState },
                 { throwable -> _uiState.setValue(CartUiState.Error) }
             )
         )
@@ -91,7 +90,7 @@ class CartViewModel(application: Application): AndroidViewModel(application) {
     sealed class CartUiState {
         object Loading : CartUiState()
         object Error : CartUiState()
-        object DeleteAll : CartUiState()
+        object EmptyState : CartUiState()
         data class DeleteProduct(val id: Int) : CartUiState()
         data class UpdateProduct(val id: Int, val quantity: Int,) : CartUiState()
         data class ShowProducts(val data: List<Product>) : CartUiState()

@@ -3,7 +3,6 @@ package com.conexa.catalog.ui
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +11,16 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.conexa.cart.model.Product
+import com.conexa.cart.repository.database.DatabaseBuilder
 import com.conexa.cart.viewmodel.CartViewModel
+import com.conexa.cart.viewmodel.ViewModelFactory
 import com.conexa.catalog.R
 import com.conexa.catalog.databinding.CatalogFragmentBinding
-import com.conexa.catalog.model.Product
 import com.conexa.catalog.ui.adapter.ProductItem
 import com.conexa.catalog.viewmodel.CatalogViewModel
 import com.conexa.catalog.viewmodel.CatalogViewModel.CatalogUiState
 import com.conexa.filter.viewmodel.CategoryViewModel
-import com.google.gson.Gson
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -32,7 +32,7 @@ class CatalogFragment : Fragment() {
     private lateinit var binding: CatalogFragmentBinding
     private val viewModel: CatalogViewModel by viewModels()
     private val viewModelFilter: CategoryViewModel by activityViewModels()
-    private val viewModelCart: CartViewModel by activityViewModels()
+    private val viewModelCart: CartViewModel by viewModels { ViewModelFactory(DatabaseBuilder.getInstance(requireContext())) }
 
     private val textWatcher: TextWatcher = object : TextWatcher {
         val subject: PublishSubject<CharSequence> = PublishSubject.create()
@@ -41,15 +41,7 @@ class CatalogFragment : Fragment() {
             subject.debounce(750, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    {
-                        viewModel.search(binding.search.text.toString())?.let {
-                            Log.d("brayan lista", Gson().toJson(it))
-                            bindScreen(it)
-                        } ?: run {
-                        Log.d("brayan lista", "es null")
-                    }
-                    },
-                    {}
+                    { viewModel.search(binding.search.text.toString())?.let { bindScreen(it) } }, {}
                 )
         }
 
@@ -112,6 +104,7 @@ class CatalogFragment : Fragment() {
 
     private fun bindScreen(data: List<Product>) {
         viewModelCart.insertProducts(data)
+        binding.catalog.visibility = View.VISIBLE
         val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
             addAll(data.map { ProductItem(it) })
         }
@@ -122,8 +115,12 @@ class CatalogFragment : Fragment() {
     }
 
     private fun hideLoading() {
+        binding.loading.visibility = View.GONE
     }
 
     private fun showLoading() {
+        binding.loading.visibility = View.VISIBLE
+        binding.catalog.visibility = View.GONE
+
     }
 }

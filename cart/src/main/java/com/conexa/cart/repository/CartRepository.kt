@@ -1,15 +1,11 @@
 package com.conexa.cart.repository
 
-import android.content.Context
 import com.conexa.cart.repository.database.AppDatabase
-import com.conexa.cart.repository.database.DatabaseBuilder
 import com.conexa.cart.model.Product
 import io.reactivex.Completable
 import io.reactivex.Single
 
-class CartRepository(context: Context) {
-
-    private val db: AppDatabase = DatabaseBuilder.getInstance(context)
+class CartRepository(private val db: AppDatabase) {
 
     fun insertAllProduct(products: List<Product>): Completable = db.productDao().insertAllProduct(products)
 

@@ -1,14 +1,11 @@
 package com.conexa.catalog.viewmodel
 
-import android.util.Log
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.conexa.cart.viewmodel.CartViewModel
 import com.conexa.catalog.domain.ShowCatalogApplyFilterUseCase
 import com.conexa.catalog.domain.ShowCatalogUseCase
-import com.conexa.catalog.model.Product
+import com.conexa.cart.model.Product
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -34,7 +31,7 @@ class CatalogViewModel : ViewModel() {
             .doOnSubscribe { _uiState.setValue(CatalogUiState.Loading) }
             .subscribe(
                 { response -> _uiState.setValue(CatalogUiState.Success(response)) },
-                { throwable -> _uiState.setValue(CatalogUiState.Error) }
+                { _uiState.setValue(CatalogUiState.Error) }
             )
         )
     }
@@ -49,20 +46,13 @@ class CatalogViewModel : ViewModel() {
                     _products.value = response
                     _uiState.value = CatalogUiState.Success(response)
                 },
-                { throwable -> _uiState.setValue(CatalogUiState.Error) }
+                { _uiState.setValue(CatalogUiState.Error) }
             )
         )
     }
 
-    fun search(searchText: String): List<Product>? {
-        products.value?.let {
-            return it.filter { product ->
-                searchText.toLowerCase().contains(product.title.toLowerCase())
-            }
-        }?: run {
-            Log.d("brayan lista", "_product es null")
-            return null
-        }
+    fun search(searchText: String) = products.value?.filter { product ->
+        searchText.toLowerCase().contains(product.title.toLowerCase())
     }
 
     override fun onCleared() {

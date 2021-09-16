@@ -6,19 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.conexa.cart.databinding.CartFragmentBinding
 import com.conexa.cart.model.Product
+import com.conexa.cart.repository.database.DatabaseBuilder
 import com.conexa.cart.ui.adapter.CartItem
 import com.conexa.cart.viewmodel.CartViewModel
 import com.conexa.cart.viewmodel.CartViewModel.CartUiState
+import com.conexa.cart.viewmodel.ViewModelFactory
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 
 class CartFragment : Fragment(), CartItem.OnClickListener {
 
     private lateinit var binding: CartFragmentBinding
-    private val viewModel: CartViewModel by activityViewModels()
+    private val viewModel: CartViewModel by viewModels { ViewModelFactory(DatabaseBuilder.getInstance(requireContext())) }
 
     private val uiStateObserver: Observer<CartUiState> =
         Observer { uiStateResponse ->
@@ -34,9 +37,18 @@ class CartFragment : Fragment(), CartItem.OnClickListener {
                     hideLoading()
                     bindScreen(uiStateResponse.data)
                 }
-                is CartUiState.DeleteAll -> {}
-                is CartUiState.DeleteProduct -> {}
-                is CartUiState.UpdateProduct -> {}
+                is CartUiState.EmptyState -> {
+                    hideLoading()
+                    showEmptyState()
+                }
+                is CartUiState.DeleteProduct -> {
+                    hideLoading()
+                    deleteProduct(uiStateResponse.id)
+                }
+                is CartUiState.UpdateProduct -> {
+                    hideLoading()
+                    updateProduct(uiStateResponse.id, uiStateResponse.quantity)
+                }
             }
         }
 
@@ -48,7 +60,6 @@ class CartFragment : Fragment(), CartItem.OnClickListener {
         binding = CartFragmentBinding.inflate(inflater)
         viewModel.uiState.observe(viewLifecycleOwner, uiStateObserver)
         viewModel.getProductsInCart()
-
         return binding.root
     }
 
@@ -58,6 +69,7 @@ class CartFragment : Fragment(), CartItem.OnClickListener {
         }
         binding.products.adapter = groupAdapter
     }
+
     private fun showErrorScreen() {
     }
 
@@ -65,6 +77,16 @@ class CartFragment : Fragment(), CartItem.OnClickListener {
     }
 
     private fun showLoading() {
+    }
+
+    private fun deleteProduct(id: Int) {
+    }
+
+    private fun updateProduct(id: Int, quantity: Int) {
+
+    }
+
+    private fun showEmptyState() {
     }
 
     override fun onDeleteClick(id: Int) {
